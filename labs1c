@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_EMPLOYEES 100
+#define MAX_DEPARTMENT_LENGTH 50
+#define MAX_COMPANY_LENGTH 50
+#define MAX_EMBG_LENGTH 14
+#define MAX_NAME_LENGTH 50
+
+typedef struct {
+    char name[MAX_NAME_LENGTH];
+    char embg[MAX_EMBG_LENGTH];
+    char department[MAX_DEPARTMENT_LENGTH];
+    int salary;
+} Employee;
+
+typedef struct {
+    char name[MAX_COMPANY_LENGTH];
+    Employee employees[MAX_EMPLOYEES];
+    int numEmployees;
+} Company;
+
+void printEmployeesBelowAverageSalary(Company *comp, int numCompanies);
+void printHighestSalaryEmployee(Company *comp, int numCompanies, char *department);
+
+int main() {
+    int numCompanies, i, j, numEmployees;
+    char department[MAX_DEPARTMENT_LENGTH];
+
+    printf("Enter the number of companies: ");
+    scanf("%d", &numCompanies);
+
+    Company companies[numCompanies];
+
+    for (i = 0; i < numCompanies; i++) {
+        printf("Enter the name of company %d: ", i + 1);
+        scanf("%s", companies[i].name);
+
+        printf("Enter the number of employees for company %d: ", i + 1);
+        scanf("%d", &numEmployees);
+
+        companies[i].numEmployees = numEmployees;
+
+        for (j = 0; j < numEmployees; j++) {
+            printf("Enter the name of employee %d: ", j + 1);
+            scanf("%s", companies[i].employees[j].name);
+
+            printf("Enter the EMBG of employee %d: ", j + 1);
+            scanf("%s", companies[i].employees[j].embg);
+
+            printf("Enter the department of employee %d: ", j + 1);
+            scanf("%s", companies[i].employees[j].department);
+
+            printf("Enter the salary of employee %d: ", j + 1);
+            scanf("%d", &companies[i].employees[j].salary);
+        }
+    }
+
+    printf("Enter the department to find the employee with highest salary: ");
+    scanf("%s", department);
+
+    printEmployeesBelowAverageSalary(companies, numCompanies);
+    printHighestSalaryEmployee(companies, numCompanies, department);
+
+    return 0;
+}
+
+void printEmployeesBelowAverageSalary(Company *comp, int numCompanies) {
+    int i, j, k;
+    float avgSalary;
+    int sumSalary;
+
+    for (i = 0; i < numCompanies; i++) {
+        sumSalary = 0;
+        for (j = 0; j < comp[i].numEmployees; j++) {
+            sumSalary += comp[i].employees[j].salary;
+        }
+
+        avgSalary = (float) sumSalary / comp[i].numEmployees;
+
+        printf("Employees below average salary in %s:\n", comp[i].name);
+
+        for (k = 0; k < comp[i].numEmployees; k++) {
+            if (comp[i].employees[k].salary < avgSalary) {
+                printf("Name: %s, EMBG: %s, Department: %s, Salary: %d\n",
+                    comp[i].employees[k].name, comp[i].employees[k].embg,
+                    comp[i].employees[k].department, comp[i].employees[k].salary);
+            }
+        }
+    }
+}
+
+void printHighestSalaryEmployee(Company *comp, int numCompanies, char *department) {
+    int i, j;
+    int highestSalary = 0;
+    Employee *highestSalaryEmployee = NULL;
